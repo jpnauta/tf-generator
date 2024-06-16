@@ -1,0 +1,3 @@
+locals {
+  x = injectvar.test
+}

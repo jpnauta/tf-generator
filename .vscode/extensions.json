@@ -1,0 +1,7 @@
+{
+    "recommendations": [
+        "golang.go",
+        "hashicorp.hcl",
+        "4ops.terraform"
+    ]
+}
