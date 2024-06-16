@@ -10,6 +10,10 @@ type Command interface {
 }
 
 func RunSubcommand(args []string, cmds []Command) error {
+	if len(args) == 0 {
+		return fmt.Errorf("missing subcommand")
+	}
+
 	// Run specified subcommand
 	subcommand := args[0]
 	for _, cmd := range cmds {

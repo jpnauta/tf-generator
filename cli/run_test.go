@@ -1,9 +1,10 @@
 package cli
 
 import (
-	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type InvalidFixture struct {
@@ -13,6 +14,10 @@ type InvalidFixture struct {
 
 func TestInvalidCommands(t *testing.T) {
 	for _, fixture := range []InvalidFixture{
+		{
+			args:            []string{},
+			expectedMessage: "missing subcommand",
+		},
 		{
 			args:            []string{"unknown"},
 			expectedMessage: "unknown subcommand: unknown",
