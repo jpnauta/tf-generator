@@ -30,12 +30,12 @@ jobs:
     - name: Build
       run: go build -o tf-generator
 
-    - name: Publish Release Asset
+    - name: Run GoReleaser
       if: startsWith(github.ref, 'refs/tags/')
-      id: publish-release
-      uses: softprops/action-gh-release@v1
+      uses: goreleaser/goreleaser-action@v4
+      with:
+        version: latest
+        args: release --clean
+        distribution: goreleaser
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        files: |
-          tf-generator
