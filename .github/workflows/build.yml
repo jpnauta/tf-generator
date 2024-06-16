@@ -36,5 +36,3 @@ jobs:
       with:
         files: |
           tf-generator
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
