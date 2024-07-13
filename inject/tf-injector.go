@@ -1,10 +1,11 @@
 package inject
 
 import (
-	"github.com/hashicorp/hcl/v2/hclwrite"
-	"tf-generator/tf"
 	"slices"
 	"sort"
+	"tf-generator/tf"
+
+	"github.com/hashicorp/hcl/v2/hclwrite"
 )
 
 // TfFileInjector Performs injections on the given `.tf` files
@@ -42,8 +43,8 @@ func (i *TfFileInjector) injectAndCombine() (*tf.TfFile, error) {
 	}
 
 	// Process used tfvar names
-	slices.Compact[[]string, string](allUsedTfvarNames) // Remove duplicates
-	sort.Slice(allUsedTfvarNames, func(i, j int) bool { // sort alphabetically for consistency
+	allUsedTfvarNames = slices.Compact[[]string, string](allUsedTfvarNames) // Remove duplicates
+	sort.Slice(allUsedTfvarNames, func(i, j int) bool {                     // sort alphabetically for consistency
 		return allUsedTfvarNames[i] < allUsedTfvarNames[j]
 	})
 

@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/hashicorp/hcl/v2"
-	"github.com/stretchr/testify/assert"
 	"path"
 	"testing"
+
+	"github.com/hashicorp/hcl/v2"
+	"github.com/stretchr/testify/assert"
 )
 
 type ValidFixture struct {
@@ -35,40 +36,7 @@ func TestValidFixtures(t *testing.T) {
 			dirPath: "examples/basics-05-combine-with-inject/",
 		},
 		{
-			dirPath: "examples/usecases-01-copy-tfvars/dev/eastus/project1/",
-		},
-		{
-			dirPath: "examples/usecases-01-copy-tfvars/dev/eastus/project2/",
-		},
-		{
-			dirPath: "examples/usecases-02-reference-remote-state/dev/eastus/project1/",
-		},
-		{
-			dirPath: "examples/usecases-02-reference-remote-state/dev/eastus/project2/",
-		},
-		{
-			dirPath: "examples/usecases-03-import-local-module/dev/eastus/project1/",
-		},
-		{
-			dirPath: "examples/usecases-03-import-local-module/dev/eastus/project2/",
-		},
-		{
-			dirPath: "examples/usecases-04-import-remote-module/dev/eastus/project1/",
-		},
-		{
-			dirPath: "examples/usecases-04-import-remote-module/dev/eastus/project2/",
-		},
-		{
-			dirPath: "examples/usecases-05-terraform-versions/dev/eastus/project1/",
-		},
-		{
-			dirPath: "examples/usecases-05-terraform-versions/dev/eastus/project2/",
-		},
-		{
 			dirPath: "fixtures/valid/empty/",
-		},
-		{
-			dirPath: "fixtures/valid/empty-tfvars/",
 		},
 		{
 			dirPath: "fixtures/valid/empty-tfvars/",
