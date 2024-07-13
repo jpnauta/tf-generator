@@ -1,8 +1,10 @@
 package main
 
 import (
+	"os"
 	"path"
 	"testing"
+	"tf-generator/initialize"
 
 	"github.com/hashicorp/hcl/v2"
 	"github.com/stretchr/testify/assert"
@@ -115,4 +117,40 @@ func TestInvalidFixtures(t *testing.T) {
 			assert.Equal(t, fixture.isDiag, isDiag)
 		})
 	}
+}
+
+func cleanInitFiles() {
+	for _, initFile := range initialize.InitFiles {
+		filePath := initFile.FileName
+		if _, err := os.Stat(filePath); !os.IsNotExist(err) {
+			os.Remove(filePath)
+		}
+	}
+}
+
+func initTestWrapper(testFunc func()) {
+	cleanInitFiles()
+	testFunc()
+	cleanInitFiles()
+}
+
+func TestInit(t *testing.T) {
+	initTestWrapper(func() {
+		args := []string{"init"}
+		if err := run(args); err != nil {
+			t.Fatal(err)
+		}
+	})
+}
+
+func TestInitFilesAlreadyExist(t *testing.T) {
+	initTestWrapper(func() {
+		args := []string{"init"}
+		if err := run(args); err != nil {
+			t.Fatal(err)
+		}
+		err := run(args)
+		assert.NotNilf(t, err, "expected error")
+		assert.Equal(t, err.Error(), "file 'tf-generator.hcl' already exists")
+	})
 }

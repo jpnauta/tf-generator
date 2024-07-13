@@ -13,3 +13,23 @@ by multiple Terraform projects. This addresses Terraform's key limitation: it ca
 import files from other folders.
 
 To see this tool in action, see the [examples/](./examples/) folder.
+
+## Usage
+
+To use this tool, first install it onto your machine:
+
+```
+curl https://raw.githubusercontent.com/jpnauta/tf-generator/development/install.sh | sudo bash
+```
+
+Next, create a sample project with the `init` command.
+
+```
+tf-generator init
+```
+
+Finally, follow the instructions to generate your first generated file.
+
+```
+tf-generator generate
+```

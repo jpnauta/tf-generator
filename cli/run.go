@@ -4,5 +4,6 @@ package cli
 func Run(args []string) error {
 	return RunSubcommand(args, []Command{
 		NewGenerateCommand(),
+		NewInitCommand(),
 	})
 }
