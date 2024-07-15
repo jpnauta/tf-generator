@@ -2,6 +2,7 @@ package generate
 
 import (
 	"fmt"
+	"path/filepath"
 )
 
 // Run main entry point for the `generate` command
@@ -32,5 +33,19 @@ func Run(filePath string, check bool) error {
 	}
 
 	fmt.Println("DONE")
+	return nil
+}
+
+func RunGlob(glob string, check bool) error {
+	files, err := filepath.Glob(glob)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Found %d generator files matching glob", len(files))
+	for _, file := range files {
+		if err := Run(file, check); err != nil {
+			return err
+		}
+	}
 	return nil
 }

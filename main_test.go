@@ -154,3 +154,23 @@ func TestInitFilesAlreadyExist(t *testing.T) {
 		assert.Equal(t, err.Error(), "file 'tf-generator.hcl' already exists")
 	})
 }
+
+func TestValidGlob(t *testing.T) {
+	args := []string{"generate", "--glob", "fixtures/valid/*/tf-generator.hcl"}
+	if err := run(args); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestInvalidGlob(t *testing.T) {
+	args := []string{"generate", "--glob", "fixtures/invalid/*/tf-generator.hcl"}
+	err := run(args)
+	assert.NotNilf(t, err, "expected error")
+}
+
+func TestPathAndGlob(t *testing.T) {
+	args := []string{"generate", "--file", "test", "--glob", "test"}
+	err := run(args)
+	assert.NotNilf(t, err, "expected error")
+	assert.Equal(t, err.Error(), "cannot specify --file and --glob")
+}

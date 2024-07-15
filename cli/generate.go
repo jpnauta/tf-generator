@@ -10,6 +10,7 @@ type GenerateCommand struct {
 	fs *flag.FlagSet
 
 	file  string
+	glob  string
 	check bool
 }
 
@@ -19,7 +20,8 @@ func NewGenerateCommand() *GenerateCommand {
 		fs: flag.NewFlagSet("generate", flag.ContinueOnError),
 	}
 
-	c.fs.StringVar(&c.file, "file", "tf-generator.hcl", "file used to configure file generation")
+	c.fs.StringVar(&c.file, "file", "", "path to generator file")
+	c.fs.StringVar(&c.glob, "glob", "", "glob used to find generator files")
 	c.fs.BoolVar(&c.check, "check", false, "only check if file is up-to-date, do not update it")
 
 	return c
@@ -41,5 +43,12 @@ func (c *GenerateCommand) Init(args []string) error {
 }
 
 func (c *GenerateCommand) Run() error {
-	return generate.Run(c.file, c.check)
+	if c.glob != "" && c.file != "" {
+		return fmt.Errorf("cannot specify --file and --glob")
+	}
+	if c.glob != "" {
+		return generate.RunGlob(c.glob, c.check)
+	} else {
+		return generate.Run(c.file, c.check)
+	}
 }
