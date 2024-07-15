@@ -49,6 +49,9 @@ func (c *GenerateCommand) Run() error {
 	if c.glob != "" {
 		return generate.RunGlob(c.glob, c.check)
 	} else {
+		if c.file == "" {
+			c.file = "tf-generator.hcl"
+		}
 		return generate.Run(c.file, c.check)
 	}
 }

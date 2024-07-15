@@ -2,7 +2,7 @@ package main
 
 import (
 	"os"
-	"path"
+	"strings"
 	"testing"
 	"tf-generator/initialize"
 
@@ -11,11 +11,11 @@ import (
 )
 
 type ValidFixture struct {
-	dirPath string
+	args []string
 }
 
 type InvalidFixture struct {
-	dirPath                 string
+	args                    []string
 	expectedMessageContains string
 	isDiag                  bool
 }
@@ -23,39 +23,41 @@ type InvalidFixture struct {
 func TestValidFixtures(t *testing.T) {
 	for _, fixture := range []ValidFixture{
 		{
-			dirPath: "examples/basics-01-load-and-combine/",
+			args: []string{"--file", "examples/basics-01-load-and-combine/tf-generator.hcl"},
 		},
 		{
-			dirPath: "examples/basics-02-locals/",
+			args: []string{"--file", "examples/basics-02-locals/tf-generator.hcl"},
 		},
 		{
-			dirPath: "examples/basics-03-merge-tfvars/",
+			args: []string{"--file", "examples/basics-03-merge-tfvars/tf-generator.hcl"},
 		},
 		{
-			dirPath: "examples/basics-04-remove-tfvar-keys/",
+			args: []string{"--file", "examples/basics-04-remove-tfvar-keys/tf-generator.hcl"},
 		},
 		{
-			dirPath: "examples/basics-05-combine-with-inject/",
+			args: []string{"--file", "examples/basics-05-combine-with-inject/tf-generator.hcl"},
 		},
 		{
-			dirPath: "fixtures/valid/empty/",
+			args: []string{"--file", "fixtures/valid/empty/tf-generator.hcl"},
 		},
 		{
-			dirPath: "fixtures/valid/empty-tfvars/",
+			args: []string{"--file", "fixtures/valid/empty-tfvars/tf-generator.hcl"},
 		},
 		{
-			dirPath: "fixtures/valid/duplicate-includes/",
+			args: []string{"--file", "fixtures/valid/duplicate-includes/tf-generator.hcl"},
 		},
 		{
-			dirPath: "fixtures/valid/include-file-comments/",
+			args: []string{"--file", "fixtures/valid/include-file-comments/tf-generator.hcl"},
 		},
 		{
-			dirPath: "fixtures/valid/locals-referencing-locals/",
+			args: []string{"--file", "fixtures/valid/locals-referencing-locals/tf-generator.hcl"},
 		},
-		// TODO test variable reference hell 2
+		{
+			args: []string{"--glob", "fixtures/valid/*/tf-generator.hcl"},
+		},
 	} {
-		t.Run(fixture.dirPath, func(t *testing.T) {
-			args := []string{"generate", "--file", path.Join(fixture.dirPath, "tf-generator.hcl"), "--check"}
+		t.Run(strings.Join(fixture.args, " "), func(t *testing.T) {
+			args := append([]string{"generate", "--check"}, fixture.args...)
 			if err := run(args); err != nil {
 				t.Fatal(err)
 			}
@@ -66,53 +68,67 @@ func TestValidFixtures(t *testing.T) {
 func TestInvalidFixtures(t *testing.T) {
 	for _, fixture := range []InvalidFixture{
 		{
-			dirPath:                 "fixtures/invalid/unknown-block/",
+			args:                    []string{"--file", "fixtures/invalid/unknown-block/tf-generator.hcl"},
 			expectedMessageContains: "Unsupported block type; Blocks of type \"unknown\" are not expected here.",
 			isDiag:                  true,
 		},
 		{
-			dirPath:                 "fixtures/invalid/syntax-error/",
+			args:                    []string{"--file", "fixtures/invalid/syntax-error/tf-generator.hcl"},
 			expectedMessageContains: "Unclosed configuration block; There is no closing brace for this block before the end of the file.",
 			isDiag:                  true,
 		},
 		{
-			dirPath:                 "fixtures/invalid/unknown/",
+			args:                    []string{"--file", "fixtures/invalid/unknown/tf-generator.hcl"},
 			expectedMessageContains: "<nil>: Configuration file not found; The configuration file fixtures/invalid/unknown/tf-generator.hcl does not exist.",
 			isDiag:                  true,
 		},
 		{
-			dirPath:                 "fixtures/invalid/tfvars-does-not-exist/",
+			args:                    []string{"--file", "fixtures/invalid/tfvars-does-not-exist/tf-generator.hcl"},
 			expectedMessageContains: "no such file or directory.",
 			isDiag:                  true,
 		},
 		{
-			dirPath:                 "fixtures/invalid/empty-generated-tfvars/",
+			args:                    []string{"--file", "fixtures/invalid/empty-generated-tfvars/tf-generator.hcl"},
 			expectedMessageContains: "the new tfvars file does not match the existing file.",
 			isDiag:                  false,
 		},
 		{
-			dirPath:                 "fixtures/invalid/invalid-tfvars/",
+			args:                    []string{"--file", "fixtures/invalid/invalid-tfvars/tf-generator.hcl"},
 			expectedMessageContains: "parse config: [locals.tfvars:1,9-10: Unclosed configuration block; There is no closing brace for this block",
 			isDiag:                  true,
 		},
 		{
-			dirPath:                 "fixtures/invalid/injected-tfvar-does-not-exist/",
+			args:                    []string{"--file", "fixtures/invalid/injected-tfvar-does-not-exist/tf-generator.hcl"},
 			expectedMessageContains: "Could not find tfvar for ref `injectvar.does-not-exist`",
 			isDiag:                  true,
 		},
 		{
-			dirPath:                 "fixtures/invalid/duplicate-local/",
+			args:                    []string{"--file", "fixtures/invalid/duplicate-local/tf-generator.hcl"},
 			expectedMessageContains: `tf-generator.hcl:6,3-8: local "a" already defined`,
 			isDiag:                  true,
 		},
-		// TODO test injected tfvar does not exist 2
+		{
+			args:                    []string{"--glob", "fixtures/invalid/*/tf-generator.hcl"},
+			expectedMessageContains: "",
+			isDiag:                  true,
+		},
+		{
+			args:                    []string{"--file", "test", "--glob", "test"},
+			expectedMessageContains: "cannot specify --file and --glob",
+			isDiag:                  false,
+		},
+		{
+			args:                    []string{},
+			expectedMessageContains: "The configuration file tf-generator.hcl does not exist.",
+			isDiag:                  true,
+		},
 	} {
-		t.Run(fixture.dirPath, func(t *testing.T) {
-			filePath := path.Join(fixture.dirPath, "tf-generator.hcl")
-			args := []string{"generate", "--file", filePath, "--check"}
+		t.Run(strings.Join(fixture.args, " "), func(t *testing.T) {
+			args := append([]string{"generate", "--check"}, fixture.args...)
 			err := run(args)
 			assert.NotNilf(t, err, "expected error")
-			assert.Contains(t, err.Error(), fixture.expectedMessageContains)
+			errMsg := err.Error()
+			assert.Contains(t, errMsg, fixture.expectedMessageContains)
 			_, isDiag := err.(hcl.Diagnostics)
 			assert.Equal(t, fixture.isDiag, isDiag)
 		})
@@ -153,24 +169,4 @@ func TestInitFilesAlreadyExist(t *testing.T) {
 		assert.NotNilf(t, err, "expected error")
 		assert.Equal(t, err.Error(), "file 'tf-generator.hcl' already exists")
 	})
-}
-
-func TestValidGlob(t *testing.T) {
-	args := []string{"generate", "--glob", "fixtures/valid/*/tf-generator.hcl"}
-	if err := run(args); err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestInvalidGlob(t *testing.T) {
-	args := []string{"generate", "--glob", "fixtures/invalid/*/tf-generator.hcl"}
-	err := run(args)
-	assert.NotNilf(t, err, "expected error")
-}
-
-func TestPathAndGlob(t *testing.T) {
-	args := []string{"generate", "--file", "test", "--glob", "test"}
-	err := run(args)
-	assert.NotNilf(t, err, "expected error")
-	assert.Equal(t, err.Error(), "cannot specify --file and --glob")
 }

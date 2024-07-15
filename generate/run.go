@@ -41,7 +41,7 @@ func RunGlob(glob string, check bool) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Found %d generator files matching glob", len(files))
+	fmt.Printf("Found %d generator files matching glob\n", len(files))
 	for _, file := range files {
 		if err := Run(file, check); err != nil {
 			return err
