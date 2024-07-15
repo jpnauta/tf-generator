@@ -109,7 +109,12 @@ func TestInvalidFixtures(t *testing.T) {
 		},
 		{
 			args:                    []string{"--glob", "fixtures/invalid/*/tf-generator.hcl"},
-			expectedMessageContains: "",
+			expectedMessageContains: `local "a" already defined`,
+			isDiag:                  true,
+		},
+		{
+			args:                    []string{"--glob", "fixtures/**/tf-generator.hcl"},
+			expectedMessageContains: `local "a" already defined`,
 			isDiag:                  true,
 		},
 		{

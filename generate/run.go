@@ -2,7 +2,8 @@ package generate
 
 import (
 	"fmt"
-	"path/filepath"
+
+	"github.com/yargevad/filepathx"
 )
 
 // Run main entry point for the `generate` command
@@ -37,7 +38,7 @@ func Run(filePath string, check bool) error {
 }
 
 func RunGlob(glob string, check bool) error {
-	files, err := filepath.Glob(glob)
+	files, err := filepathx.Glob(glob)
 	if err != nil {
 		return err
 	}

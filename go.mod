@@ -17,6 +17,7 @@ require (
 	github.com/google/go-cmp v0.5.8 // indirect
 	github.com/mitchellh/go-wordwrap v0.0.0-20150314170334-ad45545899c7 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/yargevad/filepathx v1.0.0 // indirect
 	golang.org/x/text v0.11.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
