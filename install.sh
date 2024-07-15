@@ -1,6 +1,5 @@
 #!/usr/bin/env sh
 set -e
-set -x
 
 echo "Installing tf-generator..."
 RELEASES_URL="https://github.com/jpnauta/tf-generator/releases"
