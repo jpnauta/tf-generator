@@ -33,3 +33,17 @@ Finally, follow the instructions to generate your first generated file.
 ```
 tf-generator generate
 ```
+
+### Nix Usage
+
+To use this library with [nix](https://nixos.org/), import the repository as an overlay.
+
+```
+let
+  tf-generator-overlay = import (builtins.fetchTarball https://github.com/jpnauta/tf-generator/archive/development.tar.gz);
+  pkgs = import <nixpkgs> { overlays = [ tf-generator-overlay ]; };
+in
+pkgs.mkShellNoCC {
+  buildInputs = with pkgs; [ tf-generator ];
+}
+```
