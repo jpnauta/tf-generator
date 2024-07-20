@@ -9,9 +9,9 @@ import (
 type GenerateCommand struct {
 	fs *flag.FlagSet
 
-	file  string
-	glob  string
-	check bool
+	file      string
+	recursive bool
+	check     bool
 }
 
 // NewGenerateCommand sub-command to generate files
@@ -20,8 +20,8 @@ func NewGenerateCommand() *GenerateCommand {
 		fs: flag.NewFlagSet("generate", flag.ContinueOnError),
 	}
 
-	c.fs.StringVar(&c.file, "file", "", "path to generator file")
-	c.fs.StringVar(&c.glob, "glob", "", "glob used to find generator files")
+	c.fs.StringVar(&c.file, "file", "tf-generator.hcl", "path to generator file")
+	c.fs.BoolVar(&c.recursive, "recursive", false, "search recursively for all files match generator file name")
 	c.fs.BoolVar(&c.check, "check", false, "only check if file is up-to-date, do not update it")
 
 	return c
@@ -43,15 +43,9 @@ func (c *GenerateCommand) Init(args []string) error {
 }
 
 func (c *GenerateCommand) Run() error {
-	if c.glob != "" && c.file != "" {
-		return fmt.Errorf("cannot specify --file and --glob")
-	}
-	if c.glob != "" {
-		return generate.RunGlob(c.glob, c.check)
+	if c.recursive {
+		return generate.RunRecursive(c.file, c.check)
 	} else {
-		if c.file == "" {
-			c.file = "tf-generator.hcl"
-		}
 		return generate.Run(c.file, c.check)
 	}
 }

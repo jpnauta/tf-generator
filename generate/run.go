@@ -2,8 +2,7 @@ package generate
 
 import (
 	"fmt"
-
-	"github.com/yargevad/filepathx"
+	"os"
 )
 
 // Run main entry point for the `generate` command
@@ -37,8 +36,13 @@ func Run(filePath string, check bool) error {
 	return nil
 }
 
-func RunGlob(glob string, check bool) error {
-	files, err := filepathx.Glob(glob)
+func RunRecursive(filename string, check bool) error {
+	if hasDirs(filename) {
+		return fmt.Errorf("file name %s cannot contain folders", filename)
+	}
+
+	cwd, _ := os.Getwd()
+	files, err := findFilesByName(cwd, filename)
 	if err != nil {
 		return err
 	}
