@@ -5,7 +5,7 @@ final: prev:
 
     src = ./.;
 
-    vendorHash = "sha256-TIDg83EHqgzL9QOOsgGPm6f50qvnFbZPHwVo6pBaPQQ=";
+    vendorHash = "sha256-InRf1tpAVo2x6IFUmqERfRcT9P0qAd3lEvZ1u5Nfbn4=";
 
     meta = {
       description = "Simple generator for Terraform/OpenTofu";
